@@ -1,0 +1,26 @@
+[tool.black]
+line-length = 120
+skip-string-normalization = true
+
+[tool.poetry]
+name = "legged-control-suite"
+version = "0.1.0"
+description = "A collection of legged robot environments built off DeepMind control suite"
+authors = ["Ge Yang <ge.ike.yang@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "legged_control_suite" }]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+gym = "0.21.0"
+dm-control = "0.0.425341097"
+gym-dmc = "^0.2.5"
+
+[tool.poetry.group.dev.dependencies]
+cmx = "^0.0.19"
+ml-logger = "^0.8.119"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
