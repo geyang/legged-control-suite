@@ -2,6 +2,7 @@ import collections
 import inspect
 
 from lcs import bipedalwalker
+from lcs import paramcartpole
 
 # Find all domains imported.
 _DOMAINS = {name: module for name, module in locals().items()
@@ -177,11 +178,15 @@ class LCSEnv(DMCEnv):
 
         self.skip_start = skip_start
 
-    def close(self):
-        if self.viewer is not None:
-            self.viewer.close()
-            self.viewer = None
-        return self.env.close()
+    def reset(self, **kwargs):
+        obs = self.env.reset(**kwargs).observation
+        for i in range(self.skip_start or 0):
+            obs = self.env.step([0]).observation
+
+        if self.from_pixels:
+            obs['pixels'] = self._get_obs_pixels()
+
+        return obs
 
 
 def make_gym_env(flatten_obs=True, from_pixels=False, frame_skip=1, episode_frames=1000, id=None, **kwargs):
