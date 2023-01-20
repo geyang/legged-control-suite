@@ -15,7 +15,6 @@ with doc:
 
     import matplotlib.pyplot as plt
 
-
 with doc:
     env = gym.make('lcs:Paramcartpole-swingup-v1')
     env.reset()
@@ -47,7 +46,7 @@ with doc:
     doc.print(env.unwrapped.env.physics.named.model.body_mass)
 
 doc @ "## Run simulation"
-with doc:
+with doc, doc.table().figure_row() as r:
     position_history = []
     for _ in range(100):
         action = np.full(env.action_space.shape, 0.1)
@@ -55,12 +54,12 @@ with doc:
         position_history.append(obs)
 
     img = env.render('rgb_array', camera_id=1)
-    doc.figure(img, f"{Path(__file__).stem}/cartpole_0.png", zoom="400%", title="Cartpole", caption="")
+    r.figure(img, f"{Path(__file__).stem}/cartpole_0.png", zoom="400%", title="Cartpole", caption="")
 
     env.reset(pole_length=0.5, cart_mass=2.0)
 
     img = env.render('rgb_array', camera_id=1)
-    doc.figure(img, f"{Path(__file__).stem}/cartpole_1.png", zoom="400%", title="Cartpole", caption="")
+    r.figure(img, f"{Path(__file__).stem}/cartpole_1.png", zoom="400%", title="Cartpole", caption="")
 
     for _ in range(100):
         action = np.full(env.action_space.shape, 0.1)
@@ -69,18 +68,20 @@ with doc:
 
     position_history = np.stack(position_history)
 
-    fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(13, 9))
+    # fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(13, 9))
+
+    plt.figure(figsize=[13, 9])
 
     pos_names = ['cart_position', 'pole_cos', 'pole_sin', 'cart_velocity', 'pole_velocity']
     for i, pos_name in enumerate(pos_names):
-        plt.sca(axes[i // 3][i % 3])
+        # plt.sca(axes[i // 3][i % 3])
+        plt.subplot(3, 3, i + 1)
         plt.plot(np.arange(position_history.shape[0]), position_history[:, i])
         plt.xlabel('step')
         plt.ylabel(pos_name)
-    plt.subplots_adjust(wspace=0.5)
+    plt.tight_layout()
+    # plt.subplots_adjust(wspace=0.5)
 
-    doc.savefig(f"{Path(__file__).stem}/position_history.png")
+    r.savefig(f"{Path(__file__).stem}/position_history.png", title="position_history")
 
-
-with doc:
-    env.close()
+env.close()

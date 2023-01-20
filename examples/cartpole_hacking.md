@@ -33,7 +33,6 @@ with tempfile.TemporaryDirectory() as tmp:
   <option timestep="0.01" integrator="RK4">
     <flag contact="disable" energy="enable"/>
   </option>
-  <size njmax="500" nconmax="100"/>
   <visual>
     <quality shadowsize="2048"/>
     <headlight ambient="0.4 0.4 0.4" diffuse="0.8 0.8 0.8" specular="0.1 0.1 0.1"/>
@@ -63,17 +62,17 @@ with tempfile.TemporaryDirectory() as tmp:
     <camera name="fixed" pos="0 -4 1" quat="0.707107 0.707107 0 0"/>
     <camera name="lookatcart" target="cart" pos="0 -2 2" mode="targetbody"/>
     <light name="light" pos="0 0 6" dir="0 0 -1"/>
-    <body name="cart" pos="0 0 1">
+    <body name="cart" pos="0 0 1" gravcomp="0">
       <joint name="slider" pos="0 0 0" axis="1 0 0" type="slide" solreflimit="0.08 1" range="-1.8 1.8" damping="0.0005"/>
       <geom name="cart" size="0.2 0.15 0.1" type="box" mass="1" material="self"/>
-      <body name="pole_1" pos="0 0 0">
+      <body name="pole_1" pos="0 0 0" gravcomp="0">
         <joint name="hinge_1" pos="0 0 0" axis="0 1 0" damping="2e-06"/>
         <geom name="pole_1" size="0.045 0.5" pos="0 0 0.5" quat="0 1 0 0" type="capsule" mass="0.1" material="self"/>
       </body>
     </body>
   </worldbody>
   <actuator>
-    <general name="slide" joint="slider" ctrlrange="-1 1" gear="10 0 0 0 0 0"/>
+    <general name="slide" joint="slider" ctrlrange="-1 1" gear="10 0 0 0 0 0" actdim="0"/>
   </actuator>
 </mujoco>
 
@@ -121,12 +120,12 @@ for _ in range(100):
     position_history.append(obs)
 
 img = env.render('rgb_array', camera_id=1)
-doc.figure(img, f"{Path(__file__).stem}/cartpole_0.png", zoom="400%", title="Cartpole", caption="")
+r.figure(img, f"{Path(__file__).stem}/cartpole_0.png", zoom="400%", title="Cartpole", caption="")
 
 env.reset(pole_length=0.5, cart_mass=2.0)
 
 img = env.render('rgb_array', camera_id=1)
-doc.figure(img, f"{Path(__file__).stem}/cartpole_1.png", zoom="400%", title="Cartpole", caption="")
+r.figure(img, f"{Path(__file__).stem}/cartpole_1.png", zoom="400%", title="Cartpole", caption="")
 
 for _ in range(100):
     action = np.full(env.action_space.shape, 0.1)
@@ -135,24 +134,24 @@ for _ in range(100):
 
 position_history = np.stack(position_history)
 
-fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(13, 9))
+# fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(13, 9))
+
+plt.figure(figsize=[13, 9])
 
 pos_names = ['cart_position', 'pole_cos', 'pole_sin', 'cart_velocity', 'pole_velocity']
 for i, pos_name in enumerate(pos_names):
-    plt.sca(axes[i // 3][i % 3])
+    # plt.sca(axes[i // 3][i % 3])
+    plt.subplot(3, 3, i + 1)
     plt.plot(np.arange(position_history.shape[0]), position_history[:, i])
     plt.xlabel('step')
     plt.ylabel(pos_name)
-plt.subplots_adjust(wspace=0.5)
+plt.tight_layout()
+# plt.subplots_adjust(wspace=0.5)
 
-doc.savefig(f"{Path(__file__).stem}/position_history.png")
+r.savefig(f"{Path(__file__).stem}/position_history.png", title="position_history")
 ```
 
-<table><tr><th>Cartpole</th></tr><tr><td><img style="align-self:center; zoom:400%;" src="cartpole_hacking/cartpole_0.png" /></td></tr></table>
-
-<table><tr><th>Cartpole</th></tr><tr><td><img style="align-self:center; zoom:400%;" src="cartpole_hacking/cartpole_1.png" /></td></tr></table>
-
-<img style="align-self:center;" src="cartpole_hacking/position_history.png" image="None" styles="{'margin': '0.5em'}" width="None" height="None"/>
-```python
-env.close()
-```
+| **Cartpole** | **Cartpole** | **position_history** |
+|:------------:|:------------:|:--------------------:|
+| <img style="align-self:center; zoom:400%;" src="cartpole_hacking/cartpole_0.png" /> | <img style="align-self:center; zoom:400%;" src="cartpole_hacking/cartpole_1.png" /> | <img style="align-self:center;" src="cartpole_hacking/position_history.png" image="None" styles="{'margin': '0.5em'}" width="None" height="None"/> |
+|  |  |   |
