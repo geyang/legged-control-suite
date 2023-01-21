@@ -1,5 +1,5 @@
 <mujoco model="humanoid">
-  <include file="./common/skybox.xml"/>
+ > <include file="./common/skybox.xml"/>
   <include file="./common/visual.xml"/>
   <include file="./common/materials.xml"/>
 
