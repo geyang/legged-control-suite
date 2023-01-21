@@ -3,6 +3,7 @@ import inspect
 
 from lcs import bipedalwalker
 from lcs import paramcartpole
+from lcs import humanoid_test
 
 # Find all domains imported.
 _DOMAINS = {name: module for name, module in locals().items()
