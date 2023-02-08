@@ -153,6 +153,52 @@ doc.savefig(f"{Path(__file__).stem}/position_history.png")
 <table><tr><th>Cartpole</th></tr><tr><td><img style="align-self:center; zoom:400%;" src="cartpole_hacking/cartpole_1.png" /></td></tr></table>
 
 <img style="align-self:center;" src="cartpole_hacking/position_history.png" image="None" styles="{'margin': '0.5em'}" width="None" height="None"/>
+## Resetting parameters while preserving state
+```python
+env.reset()
+
+
+position_history = []
+for _ in range(100):
+    action = np.full(env.action_space.shape, 0.1)
+    obs, reward, done, info = env.step(action)
+    position_history.append(obs)
+
+img = env.render('rgb_array', camera_id=1)
+doc.figure(img, f"{Path(__file__).stem}/cartpole_state_0.png", zoom="400%", title="Cartpole", caption="")
+
+# env.reset(pole_length=0.5, cart_mass=2.0)
+env.unwrapped.env.change_model(pole_length=0.5, cart_mass=2.0)
+
+
+img = env.render('rgb_array', camera_id=1)
+doc.figure(img, f"{Path(__file__).stem}/cartpole_state_1.png", zoom="400%", title="Cartpole", caption="")
+
+for _ in range(100):
+    action = np.full(env.action_space.shape, 0.1)
+    obs, reward, done, info = env.step(action)
+    position_history.append(obs)
+
+position_history = np.stack(position_history)
+
+fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(13, 9))
+
+pos_names = ['cart_position', 'pole_cos', 'pole_sin', 'cart_velocity', 'pole_velocity']
+for i, pos_name in enumerate(pos_names):
+    plt.sca(axes[i // 3][i % 3])
+    plt.plot(np.arange(position_history.shape[0]), position_history[:, i])
+    plt.xlabel('step')
+    plt.ylabel(pos_name)
+plt.subplots_adjust(wspace=0.5)
+
+doc.savefig(f"{Path(__file__).stem}/position_history_state.png")
+```
+
+<table><tr><th>Cartpole</th></tr><tr><td><img style="align-self:center; zoom:400%;" src="cartpole_hacking/cartpole_state_0.png" /></td></tr></table>
+
+<table><tr><th>Cartpole</th></tr><tr><td><img style="align-self:center; zoom:400%;" src="cartpole_hacking/cartpole_state_1.png" /></td></tr></table>
+
+<img style="align-self: center; zoom: 200%;" src="cartpole_hacking/position_history_state.png" image="None" styles="{'margin': '0.5em'}" width="None" height="None"/>
 ```python
 env.close()
 ```

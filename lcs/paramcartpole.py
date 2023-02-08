@@ -37,6 +37,21 @@ class ParametricEnvironment(control.Environment):
         self.physics.reload_from_xml_string(new_xml, common.ASSETS)
         return super().reset()
 
+    def change_model(self, **kwargs):
+        qpos = self.physics.data.qpos.copy()
+        qvel = self.physics.data.qvel.copy()
+
+        new_xml = _make_model(**kwargs)
+        self.physics.reload_from_xml_string(new_xml, common.ASSETS)
+
+        with self.physics.reset_context():
+            self.physics.data.qpos[:] = qpos
+            self.physics.data.qvel[:] = qvel
+
+        self.task.after_step(self.physics)
+
+
+
 
 def get_model_and_assets():
     """Returns a tuple containing the model XML string and a dict of assets."""
@@ -170,6 +185,7 @@ class Balance(base.Task):
             physics.named.data.qpos[1:] = self.random.uniform(-.034, .034, nv - 1)
         physics.named.data.qvel[:] = 0.01 * self.random.randn(physics.model.nv)
         super().initialize_episode(physics)
+
 
     def get_observation(self, physics):
         """Returns an observation of the (bounded) physics state."""
