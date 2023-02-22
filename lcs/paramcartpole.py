@@ -52,7 +52,6 @@ class ParametricEnvironment(control.Environment):
 
 
 
-
 def get_model_and_assets():
     """Returns a tuple containing the model XML string and a dict of assets."""
     return _make_model(), common.ASSETS
