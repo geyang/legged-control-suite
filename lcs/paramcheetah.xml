@@ -37,7 +37,7 @@
           <geom name="bshin" type="capsule" pos="-.14 0 -.07" euler="0 -116 0" size="0.046 .15" mass="1.59"/>
           <body name="bfoot" pos="-.28 0 -.14">
             <joint name="bfoot" range="-230 50" stiffness="120" damping="3"/>
-            <geom name="bfoot" type="capsule" pos=".03 0 -.097" euler="0 -15 0" size="0.046 .094" mass="1.1" friction="{foot_sliding_friction:0.6f} .1 .1"/>
+            <geom name="bfoot" type="capsule" pos=".03 0 -.097" euler="0 -15 0" size="0.046 .094" mass="1.1" priority="1" friction="{foot_sliding_friction:0.6f} .1 .1"/>
           </body>
         </body>
       </body>
@@ -49,7 +49,7 @@
           <geom name="fshin" type="capsule" pos=".065 0 -.09" euler="0 -34 0" size="0.046 .106" mass="1.2"/>
           <body name="ffoot" pos=".13 0 -.18">
             <joint name="ffoot" range="-28 28" stiffness="60" damping="1.5"/>
-            <geom name="ffoot" type="capsule" pos=".045 0 -.07" euler="0 -34 0" size="0.046 .07" mass="0.885" friction="{foot_sliding_friction:0.6f} .1 .1"/>
+            <geom name="ffoot" type="capsule" pos=".045 0 -.07" euler="0 -34 0" size="0.046 .07" mass="0.885" priority="1" friction="{foot_sliding_friction:0.6f} .1 .1"/>
           </body>
         </body>
       </body>

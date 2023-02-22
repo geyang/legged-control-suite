@@ -190,50 +190,6 @@ doc @ "## Varying foot Friction"
 with doc:
     obses = []
     frames = []
-    obs = env.reset(foot_sliding_friction=2.0)
-    print_feet_sliding_friction(env)
-    obses.append(obs)
-    for i in range(num_frames):
-        obs, reward, done, info = env.step(actions[i])
-        obses.append(obs)
-        frames.append(env.render('rgb_array', width=img_size, height=img_size))
-
-    print('Saving video...')
-    frames = np.stack(frames)
-    video_path = f'{Path(__file__).stem}/video_foot_friction_2.mp4'
-    imageio.mimsave(video_path, img_as_ubyte(frames), format='mp4', fps=24)
-
-    # with doc.table():
-    #     row = doc.figure_row()
-
-    doc.print('foot_sliding_friction=2.0')
-    doc.video(frames=None, src=video_path)
-
-with doc:
-    obses = []
-    frames = []
-    obs = env.reset(foot_sliding_friction=5.0)
-    print_feet_sliding_friction(env)
-    obses.append(obs)
-    for i in range(num_frames):
-        obs, reward, done, info = env.step(actions[i])
-        obses.append(obs)
-        frames.append(env.render('rgb_array', width=img_size, height=img_size))
-
-    print('Saving video...')
-    frames = np.stack(frames)
-    video_path = f'{Path(__file__).stem}/video_foot_friction_5.mp4'
-    imageio.mimsave(video_path, img_as_ubyte(frames), format='mp4', fps=24)
-
-    # with doc.table():
-    #     row = doc.figure_row()
-
-    doc.print('foot_sliding_friction=5.0')
-    doc.video(frames=None, src=video_path)
-
-with doc:
-    obses = []
-    frames = []
     obs = env.reset(foot_sliding_friction=0.001)
     print_feet_sliding_friction(env)
     obses.append(obs)
@@ -251,6 +207,50 @@ with doc:
     #     row = doc.figure_row()
 
     doc.print('foot_sliding_friction=0.001')
+    doc.video(frames=None, src=video_path)
+
+with doc:
+    obses = []
+    frames = []
+    obs = env.reset(foot_sliding_friction=0.1)
+    print_feet_sliding_friction(env)
+    obses.append(obs)
+    for i in range(num_frames):
+        obs, reward, done, info = env.step(actions[i])
+        obses.append(obs)
+        frames.append(env.render('rgb_array', width=img_size, height=img_size))
+
+    print('Saving video...')
+    frames = np.stack(frames)
+    video_path = f'{Path(__file__).stem}/video_foot_friction_0_1.mp4'
+    imageio.mimsave(video_path, img_as_ubyte(frames), format='mp4', fps=24)
+
+    # with doc.table():
+    #     row = doc.figure_row()
+
+    doc.print('foot_sliding_friction=0.1')
+    doc.video(frames=None, src=video_path)
+
+with doc:
+    obses = []
+    frames = []
+    obs = env.reset(foot_sliding_friction=2.0)
+    print_feet_sliding_friction(env)
+    obses.append(obs)
+    for i in range(num_frames):
+        obs, reward, done, info = env.step(actions[i])
+        obses.append(obs)
+        frames.append(env.render('rgb_array', width=img_size, height=img_size))
+
+    print('Saving video...')
+    frames = np.stack(frames)
+    video_path = f'{Path(__file__).stem}/video_foot_friction_2.mp4'
+    imageio.mimsave(video_path, img_as_ubyte(frames), format='mp4', fps=24)
+
+    # with doc.table():
+    #     row = doc.figure_row()
+
+    doc.print('foot_sliding_friction=2.0')
     doc.video(frames=None, src=video_path)
 
 doc.flush()

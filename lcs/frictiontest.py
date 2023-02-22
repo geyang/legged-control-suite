@@ -13,11 +13,12 @@
 # limitations under the License.
 # ============================================================================
 
-"""Cheetah Domain."""
+"""Pole Domain."""
 
 import collections
 from pathlib import Path
 
+import numpy as np
 from dm_control import mujoco
 from dm_control.rl import control
 from dm_control.suite import base
@@ -55,25 +56,17 @@ class ParametricEnvironment(control.Environment):
         self.task.after_step(self.physics)
 
 
-def _make_model(torso_mass=6.25, foot_sliding_friction=1.0):
-
-    # Distribute torso mass between the torso and the head.
-    torso_head_ratio = 2.9372693726937276
-    torso_alpha = (torso_head_ratio) / (1.0 + torso_head_ratio)
-
-    torso_torso_mass = torso_mass * torso_alpha
-    torso_head_mass = torso_mass * (1.0 - torso_alpha)
-
-    # We need to set priority of feet to 1 to directly set the friction coefficient
-    # Otherwise mujoco will use the max(ground_friction=1.0, foot_friction)
+def _make_model(sliding_friction=1.0):
 
     with open(Path(__file__).with_suffix('.xml')) as f:
         xml_string = f.read()
 
+    # We need to set priority to 1 to directly set the friction coefficient
+    # Otherwise mujoco will use the max(ground_friction=1.0, pole_friction)
+
+
     xml_string = xml_string.format(
-        torso_torso_mass=torso_torso_mass,
-        torso_head_mass=torso_head_mass,
-        foot_sliding_friction=foot_sliding_friction
+        sliding_friction=sliding_friction,
     )
 
     return xml_string
@@ -89,36 +82,38 @@ def get_model_and_assets():
 def run(time_limit=_DEFAULT_TIME_LIMIT, random=None, environment_kwargs=None):
   """Returns the run task."""
   physics = Physics.from_xml_string(*get_model_and_assets())
-  task = Cheetah(random=random)
+  task = Pole(random=random)
   environment_kwargs = environment_kwargs or {}
   return ParametricEnvironment(physics, task, time_limit=time_limit,
                                **environment_kwargs)
 
 
 class Physics(mujoco.Physics):
-  """Physics simulation with additional features for the Cheetah domain."""
+  """Physics simulation with additional features for the Pole domain."""
 
   def speed(self):
-    """Returns the horizontal speed of the Cheetah."""
+    """Returns the horizontal speed of the Pole."""
     return self.named.data.sensordata['torso_subtreelinvel'][0]
 
 
-class Cheetah(base.Task):
-  """A `Task` to train a running Cheetah."""
+class Pole(base.Task):
+  """A `Task` to train a running Pole."""
 
   def initialize_episode(self, physics):
     """Sets the state of the environment at the start of each episode."""
     # The indexing below assumes that all joints have a single DOF.
-    assert physics.model.nq == physics.model.njnt
-    is_limited = physics.model.jnt_limited == 1
-    lower, upper = physics.model.jnt_range[is_limited].T
-    physics.data.qpos[is_limited] = self.random.uniform(lower, upper)
+    # assert physics.model.nq == physics.model.njnt
+    # is_limited = physics.model.jnt_limited == 1
+    # lower, upper = physics.model.jnt_range[is_limited].T
+    # physics.data.qpos[is_limited] = self.random.uniform(lower, upper)
+    #
+    # # Stabilize the model before the actual simulation.
+    # physics.step(nstep=1)
+    #
+    # physics.data.time = 0
+    # self._timeout_progress = 0
 
-    # Stabilize the model before the actual simulation.
-    physics.step(nstep=200)
-
-    physics.data.time = 0
-    self._timeout_progress = 0
+    physics.named.data.qpos['rooty'] = np.pi * 0.48
     super().initialize_episode(physics)
 
   def get_observation(self, physics):
